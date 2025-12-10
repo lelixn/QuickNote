@@ -1,61 +1,57 @@
-import { useEffect, useState } from "react";
-import NoteCard from "./components/NoteCard";
-import { api } from "./services/api";
-import "./styles.css";
+import React, { useEffect, useRef, useState } from "react";
+import { Routes, Route, Outlet, useLocation } from "react-router-dom";
+import Navbar from "./components/Navbar";
+import Sidebar from "./components/Sidebar";
+import DashboardPage from "./pages/Dashboard";
+import NotesPage from "./pages/NotesPage";
+import SettingsPage from "./pages/Settings";
+import { gsap } from "gsap";
 
-type Note = {
-  _id: string;
-  title: string;
-  content: string;
+/**
+ * RouteTransition: animates page content when location changes
+ * We use a keyed wrapper so React will re-create it on pathname change
+ */
+const RouteTransition: React.FC = () => {
+  const location = useLocation();
+  const wrapperRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    if (!wrapperRef.current) return;
+    // simple fade/slide up animation
+    gsap.fromTo(
+      wrapperRef.current,
+      { opacity: 0, y: 12, scale: 0.995 },
+      { opacity: 1, y: 0, scale: 1, duration: 0.45, ease: "power2.out" }
+    );
+  }, [location.pathname]);
+
+  return (
+    <div className="route-wrapper" ref={wrapperRef}>
+      <Outlet />
+    </div>
+  );
 };
 
 export default function App() {
-  const [notes, setNotes] = useState<Note[]>([]);
-  const [form, setForm] = useState({ title: "", content: "" });
-
-  const getNotes = async () => {
-    const res = await api.get("/notes");
-    setNotes(res.data);
-  };
-
-  const createNote = async () => {
-    if (!form.title) return;
-    await api.post("/notes", form);
-    setForm({ title: "", content: "" });
-    getNotes();
-  };
-
-  const deleteNote = async (id: string) => {
-    await api.delete(`/notes/${id}`);
-    getNotes();
-  };
-
-  useEffect(() => {
-    getNotes();
-  }, []);
+  const [collapsed, setCollapsed] = useState(false);
 
   return (
-    <div className="container">
-      <h1>QuickNote AI</h1>
-
-      <div className="input-box">
-        <input
-          placeholder="Title"
-          value={form.title}
-          onChange={(e) => setForm({ ...form, title: e.target.value })}
-        />
-        <textarea
-          placeholder="Content"
-          value={form.content}
-          onChange={(e) => setForm({ ...form, content: e.target.value })}
-        />
-        <button onClick={createNote}>Add Note</button>
-      </div>
-
-      <div className="grid">
-        {notes.map((n) => (
-          <NoteCard key={n._id} note={n} onDelete={deleteNote} />
-        ))}
+    <div className="app">
+      <Sidebar collapsed={collapsed} />
+      <div className="main">
+        <Navbar onToggle={() => setCollapsed((s) => !s)} />
+        <main className="content">
+          <section className="panel">
+            <Routes>
+              {/* RouteTransition will animate on every path change */}
+              <Route element={<RouteTransition />}>
+                <Route index element={<DashboardPage />} />
+                <Route path="notes" element={<NotesPage />} />
+                <Route path="settings" element={<SettingsPage />} />
+              </Route>
+            </Routes>
+          </section>
+        </main>
       </div>
     </div>
   );
