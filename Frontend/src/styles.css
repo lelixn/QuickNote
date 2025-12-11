@@ -174,3 +174,15 @@ body{
 .page-header {
   margin-bottom: 24px;
 }
+
+.landing { padding: 60px 32px; display:flex; justify-content:center }
+.landing-inner { display:flex; gap:32px; align-items:center; max-width:1100px; width:100% }
+.hero-left { flex:1 }
+.hero-left h1 { font-size:44px; margin:0 }
+.hero-card { width:420px; }
+
+
+.auth-page { display:flex; justify-content:center; padding:80px 20px }
+.auth-form { width:420px; display:flex; flex-direction:column; gap:12px; padding:24px; }
+.auth-form input { padding:12px; border-radius:8px; background:transparent; border:1px solid rgba(255,255,255,0.06); color:white }
+.error { color:#ffb4b4; background:rgba(255,0,0,0.03); padding:8px; border-radius:8px }

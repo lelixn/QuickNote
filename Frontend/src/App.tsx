@@ -2,15 +2,15 @@ import React, { useEffect, useRef, useState } from "react";
 import { Routes, Route, Outlet, useLocation } from "react-router-dom";
 import Navbar from "./components/Navbar";
 import Sidebar from "./components/Sidebar";
-import DashboardPage from "./pages/Dashboard";
-import NotesPage from "./pages/NotesPage";
-import SettingsPage from "./pages/Settings";
 import { gsap } from "gsap";
+import Landing from "./pages/Landing";
+import Login from "./pages/Login";
+import Register from "./pages/Register";
+import NotesPage from "./pages/NotesPage"; // protected
+import DashboardPage from "./pages/Dashboard";
+import SettingsPage from "./pages/Settings";
+import { useAuth } from "./context/AuthContext";
 
-/**
- * RouteTransition: animates page content when location changes
- * We use a keyed wrapper so React will re-create it on pathname change
- */
 const RouteTransition: React.FC = () => {
   const location = useLocation();
   const wrapperRef = useRef<HTMLDivElement | null>(null);
@@ -33,26 +33,117 @@ const RouteTransition: React.FC = () => {
 };
 
 export default function App() {
-  const [collapsed, setCollapsed] = useState(false);
+  const { user, loading } = useAuth();
 
+  if (loading) return <div>Loading...</div>;
+
+  if (!user) {
+    // public routes
+    return (
+      <Routes>
+        <Route path="/" element={<Landing />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+        <Route path="*" element={<Landing />} />
+      </Routes>
+    );
+  }
+
+  // logged-in layout with sidebar + navbar and protected routes (as earlier)
   return (
     <div className="app">
-      <Sidebar collapsed={collapsed} />
+      <Sidebar collapsed={false} />
       <div className="main">
-        <Navbar onToggle={() => setCollapsed((s) => !s)} />
+        <Navbar onToggle={() => {}} />
         <main className="content">
-          <section className="panel">
-            <Routes>
-              {/* RouteTransition will animate on every path change */}
-              <Route element={<RouteTransition />}>
-                <Route index element={<DashboardPage />} />
-                <Route path="notes" element={<NotesPage />} />
-                <Route path="settings" element={<SettingsPage />} />
-              </Route>
-            </Routes>
-          </section>
+          <Routes>
+            <Route path="/" element={<DashboardPage />} />
+            <Route path="/dashboard" element={<DashboardPage />} />
+            <Route path="/notes" element={<NotesPage />} />
+            <Route path="/settings" element={<SettingsPage />} />
+            <Route path="*" element={<DashboardPage />} />
+          </Routes>
         </main>
       </div>
     </div>
   );
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// export default function App() {
+//   const [collapsed, setCollapsed] = useState(false);
+
+//   return (
+//     <div className="app">
+//       <Sidebar collapsed={collapsed} />
+//       <div className="main">
+//         <Navbar onToggle={() => setCollapsed((s) => !s)} />
+//         <main className="content">
+//           <section className="panel">
+//             <Routes>
+//               <Route path="/" element={<Landing />} />
+//               <Route path="/login" element={<Login />} />
+//               <Route path="/register" element={<Register />} />
+
+//               {/* protected routes */}
+//               <Route
+//                 path="/dashboard"
+//                 element={
+//                   <ProtectedRoute>
+//                     <DashboardPage />
+//                   </ProtectedRoute>
+//                 }
+//               />
+//               <Route
+//                 path="/notes"
+//                 element={
+//                   <ProtectedRoute>
+//                     <NotesPage />
+//                   </ProtectedRoute>
+//                 }
+//               />
+//               <Route
+//                 path="/settings"
+//                 element={
+//                   <ProtectedRoute>
+//                     <SettingsPage />
+//                   </ProtectedRoute>
+//                 }
+//               />
+
+//               {/* fallback */}
+//               <Route path="*" element={<Landing />} />
+//             </Routes>
+//           </section>
+//         </main>
+//       </div>
+//     </div>
+//   );
+// }
