@@ -1,21 +1,27 @@
+// backend/src/routes/noteRoutes.ts
 import { Router } from "express";
 import { Note } from "../models/Note";
+import { requireAuth, AuthRequest } from "../middleware/auth";
 
 const router = Router();
 
-router.get("/", async (_, res) => {
-  const notes = await Note.find().sort({ createdAt: -1 });
+// GET /notes  -> notes for current user
+router.get("/", requireAuth, async (req: AuthRequest, res) => {
+  const notes = await Note.find({ userId: req.userId }).sort({ createdAt: -1 });
   res.json(notes);
 });
 
-router.post("/", async (req, res) => {
+// POST /notes
+router.post("/", requireAuth, async (req: AuthRequest, res) => {
   const { title, content } = req.body;
-  const note = await Note.create({ title, content });
+  const note = await Note.create({ userId: req.userId, title, content });
   res.json(note);
 });
 
-router.delete("/:id", async (req, res) => {
-  await Note.findByIdAndDelete(req.params.id);
+// DELETE /notes/:id
+router.delete("/:id", requireAuth, async (req: AuthRequest, res) => {
+  const id = req.params.id;
+  await Note.findOneAndDelete({ _id: id, userId: req.userId });
   res.json({ message: "Deleted" });
 });
 
