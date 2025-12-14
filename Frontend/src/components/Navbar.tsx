@@ -1,21 +1,19 @@
-import React from "react";
-import { Link } from "react-router-dom";
 
-const Navbar: React.FC<{ onToggle: () => void }> = ({ onToggle }) => {
+import { useAuth } from "../context/AuthContext";
+
+export default function Navbar() {
+  const { user, logout } = useAuth();
+
   return (
     <header className="navbar">
-      <button className="hamburger" onClick={onToggle} aria-label="toggle">
-        ☰
-      </button>
-
-      <Link to="/" className="brand">QuickNote AI</Link>
+      <h1 className="brand">QuickNote AI</h1>
 
       <div className="nav-actions">
-        <Link to="/notes" className="nav-link">Notes</Link>
-        <div className="avatar">LP</div>
+        <span className="muted">{user?.name}</span>
+        <button className="btn" onClick={logout}>
+          Logout
+        </button>
       </div>
     </header>
   );
-};
-
-export default Navbar;
+}

@@ -1,4 +1,4 @@
-// src/App.tsx
+
 import { useState } from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
 import { useAuth } from "./context/AuthContext";
@@ -27,7 +27,7 @@ export default function App() {
     return <div style={{ padding: 40 }}>Loading...</div>;
   }
 
-  // 🔓 PUBLIC ROUTES (NOT LOGGED IN)
+ 
   if (!user) {
     return (
       <Routes>
