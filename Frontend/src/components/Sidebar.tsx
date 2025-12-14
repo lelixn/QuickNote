@@ -1,19 +1,21 @@
-import React from "react";
 import { NavLink } from "react-router-dom";
+import { useNotesMeta } from "../context/NotesContext";
 
-const Sidebar: React.FC<{ collapsed: boolean }> = ({ collapsed }) => {
+export default function Sidebar({ collapsed }: { collapsed: boolean }) {
+  const { count } = useNotesMeta();
+
   return (
     <aside className={`sidebar ${collapsed ? "collapsed" : ""}`}>
       <nav>
         <ul>
           <li>
-            <NavLink to="/" end className={({ isActive }) => (isActive ? "active" : "")}>
+            <NavLink to="/dashboard" className={({ isActive }) => (isActive ? "active" : "")}>
               Dashboard
             </NavLink>
           </li>
           <li>
             <NavLink to="/notes" className={({ isActive }) => (isActive ? "active" : "")}>
-              Notes
+              Notes <span className="badge">{count}</span>
             </NavLink>
           </li>
           <li>
@@ -23,9 +25,6 @@ const Sidebar: React.FC<{ collapsed: boolean }> = ({ collapsed }) => {
           </li>
         </ul>
       </nav>
-      <div className="sidebar-footer">v1.0</div>
     </aside>
   );
-};
-
-export default Sidebar;
+}

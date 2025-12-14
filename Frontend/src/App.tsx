@@ -45,7 +45,7 @@ export default function App() {
       <Sidebar collapsed={collapsed} />
 
       <div className="main">
-        <Navbar onToggle={handleToggle} />
+        <Navbar/>
 
         <main className="content">
           <Routes>

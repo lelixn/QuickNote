@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import NoteForm from "../components/NoteForm";
 import NoteCard from "../components/NoteCard";
 import { api } from "../services/api";
+import { useNotesMeta } from "../context/NotesContext";
 
 type NoteType = { _id: string; title: string; content: string; createdAt?: string };
 
@@ -25,23 +26,33 @@ const NotesPage: React.FC = () => {
     fetchNotes();
   }, []);
 
-  const addNote = async (title: string, content: string) => {
-    try {
-      const res = await api.post("/notes", { title, content });
-      setNotes((p) => [res.data, ...p]);
-    } catch (err) {
-      console.error(err);
-    }
-  };
+const { setCount } = useNotesMeta();
 
-  const deleteNote = async (id: string) => {
-    try {
-      await api.delete(`/notes/${id}`);
-      setNotes((p) => p.filter((n) => n._id !== id));
-    } catch (err) {
-      console.error(err);
-    }
-  };
+const addNote = async (title: string, content: string) => {
+  try {
+    const res = await api.post("/notes", { title, content });
+
+    setNotes((p) => [res.data, ...p]);
+  } catch (err) {
+    console.error(err);
+  }
+};
+  useEffect(() => {
+    setCount(notes.length);
+  }, [notes, setCount]);
+
+const deleteNote = async (id: string) => {
+  try {
+    await api.delete(`/notes/${id}`);
+    setNotes((p) => {
+      const next = p.filter((n) => n._id !== id);
+      setCount(next.length);
+      return next;
+    });
+  } catch (err) {
+    console.error(err);
+  }
+};
 
   return (
     <div className="page notes-page">
