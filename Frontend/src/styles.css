@@ -418,3 +418,20 @@ body {
   color: var(--accent);
   text-decoration: none;
 }
+
+.error {
+  background: rgba(255, 0, 0, 0.06);
+  color: #ffb4b4;
+  padding: 10px 14px;
+  border-radius: 10px;
+  font-size: 14px;
+}
+
+
+.ai-summary {
+  margin-top: 10px;
+  padding: 10px;
+  border-left: 3px solid #4b7bec;
+  background: rgba(75,123,236,0.05);
+  font-size: 14px;
+}

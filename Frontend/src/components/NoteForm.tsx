@@ -1,39 +1,49 @@
-import React, { useState } from "react";
+// src/components/NoteForm.tsx
+import { useState } from "react";
 
-interface Props {
+export default function NoteForm({
+  onAdd,
+  disabled
+}: {
   onAdd: (title: string, content: string) => void;
-}
-
-const NoteForm: React.FC<Props> = ({ onAdd }) => {
+  disabled?: boolean;
+}) {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
 
   const submit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!title.trim()) return;
-    onAdd(title.trim(), content.trim());
+    onAdd(title, content);
     setTitle("");
     setContent("");
   };
 
   return (
-    <form className="note-form glass" onSubmit={submit}>
+    <form className="glass note-form" onSubmit={submit}>
       <input
         className="input-title"
-        value={title}
-        onChange={(e) => setTitle(e.target.value)}
         placeholder="Title"
+        value={title}
+        disabled={disabled}
+        onChange={(e) => setTitle(e.target.value)}
       />
+
       <textarea
         className="input-content"
-        value={content}
-        onChange={(e) => setContent(e.target.value)}
         placeholder="Write your note..."
-        rows={4}
+        value={content}
+        disabled={disabled}
+        onChange={(e) => setContent(e.target.value)}
       />
-      <button className="btn primary" type="submit">Add Note</button>
+
+      <button
+        className="btn primary"
+        disabled={disabled || !title.trim()}
+        type="submit"
+      >
+        {disabled ? "Saving..." : "Add Note"}
+      </button>
     </form>
   );
-};
-
-export default NoteForm;
+}

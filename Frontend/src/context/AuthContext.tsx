@@ -27,14 +27,31 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [loading, setLoading] = useState<boolean>(!!token);
 
   useEffect(() => {
-    if (token) {
-      setAuthToken(token);
-      api.get("/auth/me").then((res) => { setUser(res.data); setLoading(false); }).catch(() => { setToken(null); localStorage.removeItem("qna_token"); setLoading(false); });
-    } else {
-      setAuthToken(undefined);
-      setLoading(false);
-    }
+    const initAuth = async () => {
+      if (!token) {
+        setAuthToken(undefined);
+        setLoading(false);
+        return;
+      }
+  
+      try {
+        setAuthToken(token);
+        const res = await api.get("/auth/me");
+        setUser(res.data);
+      } catch {
+        // invalid token
+        localStorage.removeItem("qna_token");
+        setToken(null);
+        setUser(null);
+        setAuthToken(undefined);
+      } finally {
+        setLoading(false);
+      }
+    };
+  
+    initAuth();
   }, [token]);
+  
 
   const login = async (email: string, password: string) => {
     const res = await api.post("/auth/login", { email, password });

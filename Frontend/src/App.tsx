@@ -22,10 +22,14 @@ export default function App() {
     setCollapsed(!collapsed);
   };
 
-  // wait until /auth/me resolves
   if (loading) {
-    return <div style={{ padding: 40 }}>Loading...</div>;
+    return (
+      <div style={{ padding: 60, textAlign: "center" }}>
+        <p className="muted">Restoring session…</p>
+      </div>
+    );
   }
+  
 
  
   if (!user) {

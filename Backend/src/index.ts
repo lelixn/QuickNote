@@ -5,7 +5,7 @@ import dotenv from "dotenv";
 import mongoose from "mongoose";
 import noteRoutes from "./routes/noteRoutes";
 import authRoutes from "./routes/authRoutes";
-
+import aiRoutes from "./routes/aiRoutes";
 dotenv.config();
 
 const MONGO_URI = process.env.MONGO_URI || "mongodb://127.0.0.1:27017/quicknote-ai";
@@ -17,6 +17,7 @@ app.use(express.json());
 
 mongoose.connect(MONGO_URI).then(() => console.log("✅ MongoDB connected")).catch((e) => console.error(e));
 
+app.use("/ai", aiRoutes);
 app.use("/auth", authRoutes);
 app.use("/notes", noteRoutes);
 
