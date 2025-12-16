@@ -1,27 +1,31 @@
-
+// backend/src/index.ts
 import express from "express";
 import cors from "cors";
-import dotenv from "dotenv";
-import mongoose from "mongoose";
-import noteRoutes from "./routes/noteRoutes";
-import authRoutes from "./routes/authRoutes";
-import aiRoutes from "./routes/aiRoutes";
-dotenv.config();
 
-const MONGO_URI = process.env.MONGO_URI || "mongodb://127.0.0.1:27017/quicknote-ai";
-const PORT = Number(process.env.PORT || 4000);
+import { env } from "./config/env";
+import { connectDB } from "./config/db";
+
+import authRoutes from "./routes/authRoutes";
+import noteRoutes from "./routes/noteRoutes";
+import aiRoutes from "./routes/aiRoutes";
 
 const app = express();
+
 app.use(cors());
 app.use(express.json());
 
-mongoose.connect(MONGO_URI).then(() => console.log("✅ MongoDB connected")).catch((e) => console.error(e));
-
-app.use("/ai", aiRoutes);
+// routes
 app.use("/auth", authRoutes);
 app.use("/notes", noteRoutes);
+app.use("/ai", aiRoutes);
 
-app.listen(PORT, () => console.log(`🚀 Server running on ${PORT}`));
-app.get("/", (req, res) => {
-  res.send("QuickNote AI Backend is running");
-});
+// start server ONLY after DB connects
+const startServer = async () => {
+  await connectDB();
+
+  app.listen(env.PORT, () => {
+    console.log(`🚀 Server running on port ${env.PORT}`);
+  });
+};
+
+startServer();
