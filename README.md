@@ -59,8 +59,6 @@ Built with production-grade architecture, clean UX flow, and modern DevOps pract
 ---
 
 
----
-
 ## ⚙️ Environment Variables
 
 ### Backend (`backend/.env`)
