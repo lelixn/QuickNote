@@ -32,6 +32,24 @@ Built with production-grade architecture, clean UX flow, and modern DevOps pract
 - GSAP (animations)
 - Modern CSS (glassmorphism UI)
 
+## 🏗️ Architecture Overview
+
+QuickNote AI follows a clean, modular full-stack architecture designed for scalability and security.
+
+[ Browser ]
+|
+v
+[ React + Vite Frontend ]
+|
+v
+[ Node.js + Express API ]
+|
+v
+[ MongoDB Database ]
+
+AI Flow:
+Frontend → Backend → OpenAI API
+
 ### Backend
 - Node.js
 - Express
